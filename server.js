@@ -4,31 +4,26 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoutes");
 
-dotenv.config();
+dotenv.config(); // Load environment variables
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// CORS Configuration (Fixes frontend connection issues)
+// ✅ CORS CONFIGURATION - Allows requests from your frontend
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "*", // Allow only the frontend
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true, // Allow cookies & authentication
+  origin: process.env.FRONTEND_URL || "https://yourfrontend.vercel.app", // Update with your frontend URL
+  credentials: true, // Allow credentials (cookies, authentication)
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
 };
 app.use(cors(corsOptions));
 
-// Middleware
-app.use(express.json()); // Parses incoming JSON requests
+// ✅ MIDDLEWARE
+app.use(express.json()); // Parse JSON request body
 
-// Routes
+// ✅ ROUTES
 app.use("/api/auth", authRoutes);
 
-// Root Route (To check if the backend is running)
-app.get("/", (req, res) => {
-  res.send("Backend is Running 🚀");
-});
-
-// MongoDB Connection
+// ✅ CONNECT TO MONGO DB
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -37,5 +32,11 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// Start Server
+// ✅ TEST ROUTE
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+// ✅ START SERVER
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
