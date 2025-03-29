@@ -12,7 +12,7 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: "https://yourfrontend.com", // ✅ Allow frontend access
+    origin: "https://yourfrontend.vercel.app", // ✅ Allow frontend access
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
