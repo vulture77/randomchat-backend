@@ -17,9 +17,9 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    // Stronger password hashing with 12 salt rounds
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // Hash password securely
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     user = new User({ name, email, password: hashedPassword });
 
@@ -27,8 +27,8 @@ router.post("/register", async (req, res) => {
 
     res.status(201).json({ msg: "User registered successfully" });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: "Server Error" });
+    console.error(error);
+    res.status(500).send("Server Error");
   }
 });
 
@@ -40,26 +40,23 @@ router.post("/login", async (req, res) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ msg: "Invalid email or password" });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid email or password" });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // Generate JWT Token with expiry time
-    const token = jwt.sign(
-      { id: user._id, email: user.email }, 
-      process.env.JWT_SECRET, 
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.json({ token, userId: user._id, email: user.email });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: "Server Error" });
+    console.error(error);
+    res.status(500).send("Server Error");
   }
 });
 

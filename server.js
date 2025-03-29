@@ -4,28 +4,29 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoutes");
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+// CORS Configuration (Fixes frontend connection issues)
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "*", // Allow only the frontend
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true, // Allow cookies & authentication
+};
+app.use(cors(corsOptions));
 
 // Middleware
-app.use(express.json());
+app.use(express.json()); // Parses incoming JSON requests
 
-// CORS Configuration (Allow only frontend URL)
-const allowedOrigins = [process.env.FRONTEND_URL];
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// Routes
+app.use("/api/auth", authRoutes);
+
+// Root Route (To check if the backend is running)
+app.get("/", (req, res) => {
+  res.send("Backend is Running 🚀");
+});
 
 // MongoDB Connection
 mongoose
@@ -33,20 +34,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("✅ MongoDB Connected Successfully"))
-  .catch((err) => {
-    console.error("❌ MongoDB Connection Error:", err);
-    process.exit(1); // Stop server if DB connection fails
-  });
-
-// Routes
-app.use("/api/auth", authRoutes);
-
-// Default Route
-app.get("/", (req, res) => {
-  res.send("Backend is Running 🚀");
-});
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // Start Server
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
