@@ -8,14 +8,16 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 
-// ✅ CORS CONFIGURATION - Allows requests from your frontend
+// ✅ CORS CONFIGURATION - Fixes XHR Issues
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "https://yourfrontend.vercel.app", // Update with your frontend URL
-  credentials: true, // Allow credentials (cookies, authentication)
+  origin: process.env.FRONTEND_URL || "https://yourfrontend.vercel.app", // Allow frontend
+  credentials: true, // Allow cookies & auth headers
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
 };
-app.use(cors(corsOptions));
+
+app.use(cors(corsOptions)); // Enable CORS
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
 // ✅ MIDDLEWARE
 app.use(express.json()); // Parse JSON request body
@@ -23,7 +25,7 @@ app.use(express.json()); // Parse JSON request body
 // ✅ ROUTES
 app.use("/api/auth", authRoutes);
 
-// ✅ CONNECT TO MONGO DB
+// ✅ CONNECT TO MONGODB
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
