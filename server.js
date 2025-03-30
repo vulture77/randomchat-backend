@@ -8,11 +8,16 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 
-// ✅ FIX CORS ISSUE
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://yourfrontend.vercel.app",
-  credentials: true,
-}));
+// ✅ CORS CONFIGURATION - Fixes XHR Issues
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "https://yourfrontend.vercel.app", // Allow frontend
+  credentials: true, // Allow cookies & auth headers
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+};
+
+app.use(cors(corsOptions)); // Enable CORS
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
 // ✅ MIDDLEWARE
 app.use(express.json()); // Parse JSON request body
