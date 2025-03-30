@@ -8,12 +8,12 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 
-// ✅ CORS CONFIGURATION - Fixes XHR Issues
+// ✅ FIXED CORS CONFIGURATION
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "https://randomchat-frontend.vercel.app/", // Allow frontend
+  origin: process.env.FRONTEND_URL || "https://randomchat-frontend.vercel.app", // Allow frontend URL
   credentials: true, // Allow cookies & auth headers
-  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS", // Allow all HTTP methods
+  allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization", // Allow all headers
 };
 
 app.use(cors(corsOptions)); // Enable CORS
@@ -36,7 +36,7 @@ mongoose
 
 // ✅ TEST ROUTE
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.send("✅ API is running...");
 });
 
 // ✅ START SERVER
