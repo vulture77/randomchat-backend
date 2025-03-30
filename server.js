@@ -10,7 +10,7 @@ const app = express();
 
 // ✅ CORS CONFIGURATION - Fixes XHR Issues
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "https://yourfrontend.vercel.app", // Allow frontend
+  origin: process.env.FRONTEND_URL || "https://randomchat-frontend.vercel.app/", // Allow frontend
   credentials: true, // Allow cookies & auth headers
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
